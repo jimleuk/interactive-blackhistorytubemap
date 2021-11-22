@@ -71,7 +71,7 @@
        */
       import { fromEvent } from 'https://cdn.skypack.dev/rxjs';
       import { dispatch } from './actions/index.js';
-      import { ACTIONS } from './features/tubeMap/index.js';
+      import { ACTIONS } from './features/TubeMap/index.js';
       let labelCursor = 0;
       const inputToggleLabels = document.querySelector('#input-toggle-labels');
       fromEvent(inputToggleLabels, 'change')
@@ -92,10 +92,7 @@
       await tubeMap.init();
       tubeMap.render();
 
-      const resizerObserver = new ResizeObserver((e) => {
-        console.log(e);
-        tubeMap.resize()
-      });
+      const resizerObserver = new ResizeObserver((e) => tubeMap.resize());
       resizerObserver.observe(el);
 
       ofType(ACTIONS.TOGGLE_LABELS)

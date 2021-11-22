@@ -1,7 +1,7 @@
 import WinBox from "https://unpkg.com/winbox@0.2.1/src/js/winbox.js";
 import { stationsKeyByCode } from '../../../datasets/index.js'
 import { dispatch } from '../../../actions/index.js';
-import { isMobileViewport } from '../../utils/index.js';
+import { isMobileViewport, getBaseUrl } from '../../utils/index.js';
 import { ACTIONS } from '../index.js';
 import Detail from './Detail.js';
 
@@ -41,7 +41,7 @@ const DetailModal = (station) => {
     html: content,
     onclose: () => {
       currentInstance = null;
-      window.location.href = `${window.location.href}#`;
+      window.location.href = `${getBaseUrl()}#`;
       dispatch({ type: ACTIONS.CLOSE_STATION, payload: station, error: null });
     }
   });

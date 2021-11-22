@@ -1,7 +1,8 @@
 import keyBy from 'https://cdn.skypack.dev/lodash.keyby';
 import { csvParse } from "https://cdn.skypack.dev/d3-dsv@3";
+import { getBaseUrl } from '../features/utils/index.js';
 
-const BASE_URL = `${window.location.href}/datasets`;
+const BASE_URL = `${getBaseUrl()}/datasets`;
 
 const URL_PEOPLE = `${BASE_URL}/people.json`;
 const URL_LABEL_PEOPLE = `${BASE_URL}/labels-people.csv`;
