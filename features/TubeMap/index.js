@@ -1,7 +1,7 @@
 import { SVG } from 'https://cdn.skypack.dev/@svgdotjs/svg.js';
 import 'https://cdn.skypack.dev/@svgdotjs/svg.panzoom.js';
 import { getBaseUrl } from '../utils/index.js';
-import { labelsPeople, labelsStation } from '../../datasets/index.js'
+import { getData } from '../../datasets/index.js'
 
 export const ACTIONS = {
   TOGGLE_LABELS: 'TOGGLE_LABELS',
@@ -18,7 +18,7 @@ export class TubeMap {
   labelsCursor = 0;
 
   constructor(props = {}) {
-    this.labels = props.labels || [labelsPeople, labelsStation];
+    this.labels = props.labels || [getData('labelsPeople'), getData('labelsStation')];
     this.el = props.el || document.createElement('div');
   }
 

@@ -71,6 +71,7 @@
        */
       import { fromEvent } from 'https://cdn.skypack.dev/rxjs';
       import { dispatch } from './actions/index.js';
+      
       import { ACTIONS } from './features/TubeMap/index.js';
       let labelCursor = 0;
       const inputToggleLabels = document.querySelector('#input-toggle-labels');
@@ -85,20 +86,27 @@
        * Renders the tube map
        */
       import { ofType } from './actions/index.js';
-      import { TubeMap, ACTIONS } from './features/TubeMap/index.js';
+      import { ACTIONS as ACTIONS_DATASETS } from './datasets/index.js';
+      import { TubeMap, ACTIONS as ACTIONS_TUBEMAP } from './features/TubeMap/index.js';
 
       const el = document.querySelector('#app-map');
-      const tubeMap = new TubeMap({ el });
-      await tubeMap.init();
-      tubeMap.render();
+      let tubeMap = null;
+      ofType(ACTIONS_DATASETS.DATA_READY)
+        .subscribe(async () => {
+          tubeMap = new TubeMap({ el });
+          await tubeMap.init()
+          tubeMap.render();
 
-      const resizerObserver = new ResizeObserver((e) => tubeMap.resize());
-      resizerObserver.observe(el);
+          const resizerObserver = new ResizeObserver((e) => tubeMap.resize());
+          resizerObserver.observe(el);
+        });
 
-      ofType(ACTIONS.TOGGLE_LABELS)
+      ofType(ACTIONS_TUBEMAP.TOGGLE_LABELS)
         .subscribe(event => {
-          tubeMap.setLabelsCursor(event.payload);
-          tubeMap.renderLabels();
+          if (tubeMap) {
+            tubeMap.setLabelsCursor(event.payload);
+            tubeMap.renderLabels();
+          }
         });
     </script>
     <script type="module">
