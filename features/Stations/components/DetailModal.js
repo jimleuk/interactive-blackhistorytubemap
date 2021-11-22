@@ -41,7 +41,7 @@ const DetailModal = (station) => {
     html: content,
     onclose: () => {
       currentInstance = null;
-      window.location.href = `${window.location.origin}/#`;
+      window.location.href = `${window.location.href}#`;
       dispatch({ type: ACTIONS.CLOSE_STATION, payload: station, error: null });
     }
   });

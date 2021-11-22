@@ -6,7 +6,7 @@ export const ACTIONS = {
   TOGGLE_LABELS: 'TOGGLE_LABELS',
 }
 
-const URL_MAP_SVG = `${window.location.origin}/features/tubeMap/assets/map.svg`;
+const URL_MAP_SVG = `${window.location.href}/features/TubeMap/assets/map.svg`;
 
 export class TubeMap {
   /** the SVGJS instance */
@@ -69,7 +69,7 @@ export class TubeMap {
   renderLinks() {
     const labels = this.mapSVG.find('#labels text')
     const hotspots = this.mapSVG.find('#hotspots circle')
-    const generateLink = (id) => `${window.location.origin}#stations/${id.replace(/_\d+$/, '')}`;
+    const generateLink = (id) => `${window.location.href}#stations/${id.replace(/_\d+$/, '')}`;
 
     labels.forEach(el => {
       const id = el.attr('id').replace('label_', '');
