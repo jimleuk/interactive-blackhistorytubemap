@@ -1,0 +1,1 @@
+export const isMobileViewport = () => window.innerWidth <= 480;
