@@ -131,7 +131,7 @@
             ...event.payload,
             station: stationsKeyByCode[event.payload.station_code],
           };
-          el.innerHTML = Thumbnail(selectedStation);
+          Thumbnail(selectedStation, el);
         });
 
       fromEvent(el, 'click')

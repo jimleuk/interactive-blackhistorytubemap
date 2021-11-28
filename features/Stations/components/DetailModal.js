@@ -25,27 +25,18 @@ const mobileConfig = {
 export let currentInstance = null;
 
 const DetailModal = (station) => {
-  const content = Detail({
-    ...station,
-    station: stationsKeyByCode[station.station_code],
-  });
-
-  if (currentInstance) {
-    currentInstance.body.innerHTML = content;
-    currentInstance.body.scrollTo(1, 1);
-    return;
+  if (!currentInstance) {
+    currentInstance = new WinBox({
+      ...(!isMobileViewport() ? defaultConfig : mobileConfig),
+      onclose: () => {
+        currentInstance = null;
+        window.location.href = `${getBaseUrl()}#`;
+        dispatch({ type: ACTIONS.CLOSE_STATION, payload: station, error: null });
+      }
+    });
   }
-
-  currentInstance = new WinBox({
-    ...(!isMobileViewport() ? defaultConfig : mobileConfig),
-    html: content,
-    onclose: () => {
-      currentInstance = null;
-      window.location.href = `${getBaseUrl()}#`;
-      dispatch({ type: ACTIONS.CLOSE_STATION, payload: station, error: null });
-    }
-  });
-
+  Detail({ ...station, station: stationsKeyByCode[station.station_code] }, currentInstance.body);
+  currentInstance.body.scrollTo(1, 1);
   return currentInstance;
 }
 
