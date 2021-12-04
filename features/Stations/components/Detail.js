@@ -64,7 +64,7 @@ const Detail = ({
               <a href="${info_url}" target="_blank" rel="noopener noreferrer" title="Link to external site">${info_url}</a>
             </p>
           </div>`) : null}
-        ${category.length ? (
+        ${category && category.length ? (
           html`<div class="profile-content-item pl-2 pr-2">
             <h3>Categories</h3>
             ${category.map(cat => html`<a href="./#filter/${cat}" class="category-tag pl-1 pr-1 mr-1">${cat}</a>`)}
