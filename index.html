@@ -28,7 +28,18 @@
         </div>
       </div>
       <div class="app-content">
-        <div id="app-map"></div>
+        <div id="app-map">
+          <tube-map
+            asset="./features/TubeMap/assets/map.svg"
+            data="./datasets/labels-people.csv"
+            zoomMin="1"
+            zoomMax="10"
+            boundLeft="100"
+            boundRight="100"
+            boundTop="100"
+            boundBottom="100"
+          />
+        </div>
       </div>
       <div id="wx-station-thumbnail"></div>
       <div id="wx-info" class="app-footer in-active">
@@ -85,28 +96,36 @@
       /**
        * Renders the tube map
        */
+      import { fromEvent } from 'https://cdn.skypack.dev/rxjs';
       import { ofType } from './actions/index.js';
-      import { ACTIONS as ACTIONS_DATASETS } from './datasets/index.js';
-      import { TubeMap, ACTIONS as ACTIONS_TUBEMAP } from './features/TubeMap/index.js';
+      import { ACTIONS } from './features/TubeMap/index.js';
 
       const el = document.querySelector('#app-map');
-      let tubeMap = null;
-      ofType(ACTIONS_DATASETS.DATA_READY)
-        .subscribe(async () => {
-          tubeMap = new TubeMap({ el });
-          await tubeMap.init()
-          tubeMap.render();
+      const instance = el.querySelector('tube-map');
 
-          const resizerObserver = new ResizeObserver((e) => tubeMap.resize());
-          resizerObserver.observe(el);
+      (new ResizeObserver((entries) => {
+        const box = el.getBoundingClientRect();
+        instance.width = box.width;
+        instance.height = box.height - 10;
+      })).observe(el);
+
+      let toggleState = false;
+      ofType(ACTIONS.TOGGLE_LABELS)
+        .subscribe(event => {
+          if (instance) {
+            instance.data = toggleState
+              ? './datasets/labels-people.csv'
+              : './datasets/labels-stations.csv'
+            toggleState = !toggleState;
+          }
         });
 
-      ofType(ACTIONS_TUBEMAP.TOGGLE_LABELS)
-        .subscribe(event => {
-          if (tubeMap) {
-            tubeMap.setLabelsCursor(event.payload);
-            tubeMap.renderLabels();
-          }
+      fromEvent(instance, 'select')
+        .subscribe(e => {
+          const id = e.detail.value;
+          const baseUrl = `${window.location.origin}${window.location.pathname}`;
+          const url = `${baseUrl}#stations/${id.replace(/_\d+$/, '')}`
+          window.location.href = url;
         });
     </script>
     <script type="module">

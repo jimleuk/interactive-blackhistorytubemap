@@ -1,14 +1,8 @@
 <svg width="828" height="566" viewBox="0 0 828 566" fill="none" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <style type="text/css">
-    @import url(https://fonts.googleapis.com/css?family=Hammersmith+One);
-    svg {
-      font-family: 'HammersmithOne', 'Hammersmith One';
-      font-size: 3.5px;
-    }
-    #labels text {
-      fill: #263d96;
-    }
+    svg { font-size: 3.5px; }
+    #labels text { fill: #263d96; cursor: pointer; }
   </style>
 </defs>
 <g>

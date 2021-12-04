@@ -1,59 +1,89 @@
+import { LitElement, html, css } from 'https://cdn.skypack.dev/lit';
 import { SVG } from 'https://cdn.skypack.dev/@svgdotjs/svg.js';
 import 'https://cdn.skypack.dev/@svgdotjs/svg.panzoom.js';
-import { getBaseUrl } from '../utils/index.js';
-import { getData } from '../../datasets/index.js'
+import { csvParse } from "https://cdn.skypack.dev/d3-dsv@3";
 
 export const ACTIONS = {
   TOGGLE_LABELS: 'TOGGLE_LABELS',
 }
+class TubeMap extends LitElement {
+  DATASET_CACHE = {};
 
-const URL_MAP_SVG = `${getBaseUrl()}/features/TubeMap/assets/map.svg`;
-
-export class TubeMap {
-  /** the SVGJS instance */
-  mapSVG = null;
-  /** holds datasets used to render labels on the map */
-  labels = [];
-  /** represents an index position in the "labels" array. Used to determine currently selected "labels". */
-  labelsCursor = 0;
-
-  constructor(props = {}) {
-    this.labels = props.labels || [getData('labelsPeople'), getData('labelsStation')];
-    this.el = props.el || document.createElement('div');
+  static properties = {
+    asset: { attribute: true },
+    data: { attribute: true },
+    width: { attribute: true, type: 'number' },
+    height: { attribute: true, type: 'number' },
+    zoomMin: { attribute: true, type: 'number' },
+    zoomMax: { attribute: true, type: 'number' },
+    boundLeft: { attribute: true, type: 'number' },
+    boundRight: { attribute: true, type: 'number' },
+    boundTop: { attribute: true, type: 'number' },
+    boundBottom: { attribute: true, type: 'number' },
+    svg: { attribute: false },
   }
 
-  async init() {
-    this.mapSVG = SVG(await fetch(URL_MAP_SVG).then(res => res.text()));
-    this.resize();
-    this.mapSVG.addTo(this.el).panZoom({
-      zoomMin: 1,
-      zoomMax: 10,
-      margins: { top: 100, bottom: 100, left: 100, right: 100 }
-    });
+  static styles = css`
+    :host {
+      display: block;
+    }
+  `
+
+  constructor() {
+    super();
   }
 
-  setLabelsCursor(idx) {
-    this.labelsCursor = idx;
+  async connectedCallback() {
+    super.connectedCallback();
+    await this.renderAsset();
+    this.renderData();
+    this.bindEvents();
   }
 
-  getCurrentLabels() {
-    return this.labels[this.labelsCursor];
+  render() {
+    if (!this.svg) return html`<svg />`;
+    return html`${this.svg.node}`;
+  }
+
+  async update(props) {
+    super.update(props);
+    if (props.has('width') || props.has('height')) this.resize();
+    if (props.has('data')) this.renderData();
   }
 
   resize() {
-    const box = this.el.getBoundingClientRect();
-    this.mapSVG.size(box.width, box.height-10);
+    if (!this.svg) return;
+    this.svg.size(this.width, this.height)
   }
 
-  renderLabels() {
-    const labelElements = this.mapSVG.find('#labels');
-    this.getCurrentLabels().forEach(item => {
+  async renderAsset() {
+    const res = await fetch(this.asset);
+    this.svg = SVG(await res.text());
+    this.svg.size(this.width, this.height);
+    this.svg.panZoom({
+      zoomMin: this.zoomMin,
+      zoomMax: this.zoomMax,
+      margins: { top: this.boundTop, bottom: this.boundBottom, left: this.boundLeft, right: this.boundRight }
+    });
+  }
+
+  async renderData() {
+    if (!this.svg || !this.data) return;
+    if (!this.DATASET_CACHE[this.data]) {
+      const response = await fetch(this.data);
+      const data = csvParse(await response.text());
+      this.DATASET_CACHE[this.data] = data;
+    }
+    this.renderLabels(this.DATASET_CACHE[this.data]);
+  }
+
+  renderLabels(data) {
+    const labelElements = this.svg.find('#labels');
+    data.forEach(item => {
       const id = `#label_${item.id}`;
       const [label] = labelElements.find(id);
-      if (!label) {
-        console.error(`renderLabels: couldn\'t find ${id}`);
-        return;
-      }
+      if (!label) return;
+
       const parts = item.display_name.split('\\n');
       const og = label.first('tspan');
       const [x] = og.attr('x');
@@ -67,23 +97,18 @@ export class TubeMap {
     });
   }
 
-  renderLinks() {
-    const labels = this.mapSVG.find('#labels text')
-    const hotspots = this.mapSVG.find('#hotspots circle')
-    const generateLink = (id) => `${getBaseUrl()}#stations/${id.replace(/_\d+$/, '')}`;
-
-    labels.forEach(el => {
-      const id = el.attr('id').replace('label_', '');
-      el.linkTo(generateLink(id));
+  bindEvents() {
+    this.svg.on('click', (e) => {
+      const node = e.composedPath().find(node => (node.tagName === 'text' || node.tagName === 'circle') && node.id);
+      if (!node) return;
+      const value = node.id.replace('label_', '');
+      this.dispatchEvent(new CustomEvent('select', {
+        detail: { value },
+        bubbles: true,
+        composed: true,
+      }));
     });
-    hotspots.forEach(el => {
-      const id = el.attr('id');
-      el.linkTo(generateLink(id));
-    });
-  }
-
-  render() {
-    this.renderLabels();
-    this.renderLinks();
   }
 }
+
+customElements.define('tube-map', TubeMap)
