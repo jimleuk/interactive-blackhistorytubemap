@@ -7,6 +7,7 @@
     <meta name="description" content="An interactive way to navigate the Black History Tube Map." />
     <link rel="stylesheet" href="https://rawcdn.githack.com/nextapps-de/winbox/0.2.0/src/css/winbox.css" />
     <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./common/components/index.js"></script>
   </head>
   <body>
     <div class="app">
@@ -41,7 +42,7 @@
           />
         </div>
       </div>
-      <div id="wx-station-thumbnail"></div>
+      <div id="wx-station-preview"></div>
       <div id="wx-info" class="app-footer in-active">
         <div class="app-footer-inner pb-3">
           <div class="app-footer-toolbar">
@@ -130,32 +131,32 @@
     </script>
     <script type="module">
       /**
-       * renders a thumbnail view which is mobile only.
+       * renders a preview which is mobile only.
        */
       import { fromEvent } from 'https://cdn.skypack.dev/rxjs';
       import { stationsKeyByCode } from './datasets/index.js'
       import { ofType, dispatch } from './actions/index.js';
       import { ACTIONS } from './features/Stations/index.js';
-      import Thumbnail from './features/Stations/components/Thumbnail.js';
-      import DetailModal from './features/Stations/components/DetailModal.js';
+      import Modal from './features/Stations/components/Modal.js';
+      import Preview from './features/Stations/components/Preview.js';
 
-      const el = document.querySelector('#wx-station-thumbnail');
+      const el = document.querySelector('#wx-station-preview');
+      let hasEventListener = null;
+      let payload = null;
 
-      let selectedStation = null;
       ofType(ACTIONS.OPEN_STATION)
         .filter(event => event.meta.isMobileViewport)
         .subscribe(event => {
           if (event.error) return;
-          selectedStation = {
-            ...event.payload,
-            station: stationsKeyByCode[event.payload.station_code],
-          };
-          Thumbnail(selectedStation, el);
-        });
+          payload = event.payload;
+          const profileCard = Preview(payload, el);
 
-      fromEvent(el, 'click')
-        .subscribe(() => {
-          if (selectedStation) DetailModal(selectedStation);
+          if (!hasEventListener) {
+            hasEventListener = fromEvent(profileCard, 'click')
+              .subscribe(() => {
+                Modal(payload);
+              });
+          }
         });
     </script>
     <script type="module">
@@ -165,12 +166,12 @@
        */
       import { ofType } from './actions/index.js';
       import { ACTIONS } from './features/Stations/index.js';
-      import DetailModal from './features/Stations/components/DetailModal.js';
+      import Modal from './features/Stations/components/Modal.js';
 
       ofType(ACTIONS.OPEN_STATION)
         .filter(event => !event.meta.isMobileViewport)
         .subscribe(event => {
-          DetailModal(event.payload);
+          Modal(event.payload);
         });
     </script>
     <script type="module">

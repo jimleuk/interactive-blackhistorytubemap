@@ -255,70 +255,6 @@ body {
 /* components */
 /* ========================================================================== */
 
-/* profile ================================================================== */
-.profile {
-  border-top: 1px solid var(--color-gray-2);
-}
-.profile-header {
-  display: flex;
-}
-.profile-header-left {
-  flex-grow: 1;
-}
-.profile-title {
-  font-size: var(--size-2);
-}
-.profile-meta {
-  font-size: var(--size-1);
-  display: flex;
-}
-.profile-content-item h3 {
-  font-size: var(--size-2);
-  font-weight: var(--weight-2);
-}
-.profile-content-item a {
-  word-wrap: break-word;
-}
-.profile-content-description {
-  font-size: var(--size-4);
-}
-.profile-content-image {
-  position: relative;
-  background-color: var(--color-gray-1);
-  border-top: 1px solid var(--color-gray-2);
-  border-bottom: 1px solid var(--color-gray-2);
-  min-height: 300px;
-}
-.profile-content-image img {
-  width: 100%;
-  max-height: 360px;
-  object-fit: contain;
-}
-.profile-content-image-attribution {
-  color: var(--color-gray-3);
-  font-size: var(--size-1);
-  text-align: right;
-}
-.profile-content-image-placeholder {
-  position: absolute;
-  width: 100%;
-  height:100%;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--size-4);
-  color: var(--color-gray-3);
-}
-@media screen and (min-width: 480px) {
-  .profile-title {
-    font-size: var(--size-3);
-  }
-  .profile-meta {
-    font-size: var(--size-2);
-  }
-}
 /* category-tag ============================================================= */
 .category-tag {
   text-decoration: none;
@@ -347,23 +283,3 @@ body {
   }
 }
 
-/* wx-station-badge ========================================================= */
-.wx-station-badge {
-  width: 42px;
-  height: 42px;
-  border-width: 10px;
-  border-style: solid;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.wx-station-badge span {
-  background-color: var(--color-brand-1);
-  color: var(--color-white);
-  padding-top: 3px;
-  padding-bottom: 3px;
-  white-space: nowrap;
-  text-align: center;
-  font-size: var(--size-1);
-}
