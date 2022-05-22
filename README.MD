@@ -1,6 +1,6 @@
 # Interactive Black History Tube Map
 
-![Screenshot](./docs/screenshot.png)
+![Screenshot](./static/screenshot.png)
 
 The **Interactive Black History Tube Map** is a single page web app purpose built for navigating the Black History Tube Map (2021).
 
