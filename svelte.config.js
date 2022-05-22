@@ -9,8 +9,12 @@ const config = {
 
   kit: {
     adapter: adapter(),
+    paths: {
+      assets: 'https://jimleuk.github.io/interactive-blackhistorytubemap',
+      base: '/interactive-blackhistorytubemap'
+    },
     prerender: {
-      default: true
+      default: true,
     }
   }
 };
